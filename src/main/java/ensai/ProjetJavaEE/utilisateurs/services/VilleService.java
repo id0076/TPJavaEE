@@ -17,7 +17,9 @@ public class VilleService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void creer(Ville ville) {
+		
 		entityManager.persist(ville);
+		
 	}
 	
 }

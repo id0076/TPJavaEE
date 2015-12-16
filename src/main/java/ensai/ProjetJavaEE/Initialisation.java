@@ -1,5 +1,6 @@
 package ensai.ProjetJavaEE;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
@@ -12,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import ensai.ProjetJavaEE.utilisateurs.modele.Adresse;
+import ensai.ProjetJavaEE.utilisateurs.modele.ProfilsUtilisateur;
 import ensai.ProjetJavaEE.utilisateurs.modele.Utilisateur;
 import ensai.ProjetJavaEE.utilisateurs.modele.Ville;
-import ensai.ProjetJavaEE.utilisateurs.services.ModificationUtilisateurService;
 import ensai.ProjetJavaEE.utilisateurs.services.UtilisateurInvalideException;
 import ensai.ProjetJavaEE.utilisateurs.services.UtilisateurService;
 import ensai.ProjetJavaEE.utilisateurs.services.VilleService;
@@ -30,9 +31,6 @@ public class Initialisation {
 	
 	@Autowired
 	private UtilisateurService utilisateurService;
-	
-	@Autowired
-	private ModificationUtilisateurService modificationUtilisateurService;
 
 	@SuppressWarnings("deprecation")
 	@PostConstruct
@@ -55,6 +53,9 @@ public class Initialisation {
 		utilisateur.setDateDeNaissance(new Date(1993, 11, 19));
 		utilisateur.setEmail("davidlesurque@gmail.com");
 		
+		utilisateur.setProfils(new ArrayList<ProfilsUtilisateur>());
+		utilisateur.getProfils().add(ProfilsUtilisateur.ADMINISTRATEUR);
+		
 		Adresse adresse = new Adresse();
 		adresse.setVille(rennes);
 		adresse.setRue("République");
@@ -67,8 +68,6 @@ public class Initialisation {
 		} catch (UtilisateurInvalideException e) {
 			e.printStackTrace();
 		}
-		
-		modificationUtilisateurService.ModificationEmailUtilisateur("test@test.com", "David");
 		
 	}
 
