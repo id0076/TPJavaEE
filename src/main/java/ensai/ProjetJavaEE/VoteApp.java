@@ -11,4 +11,5 @@ public class VoteApp {
 		SpringApplication.run(VoteApp.class, args);
 		
 	}
+	
 }
