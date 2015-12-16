@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import ensai.ProjetJavaEE.notifications.services.NotificationsServices;
+import ensai.ProjetJavaEE.notifications.services.NotificationsServices.ActionUtilisateur;
 //import ensai.ProjetJavaEE.notifications.services.NotificationsServices;
 import ensai.ProjetJavaEE.utilisateurs.modele.ProfilsUtilisateur;
 import ensai.ProjetJavaEE.utilisateurs.modele.Utilisateur;
@@ -22,8 +24,8 @@ import ensai.ProjetJavaEE.utilisateurs.services.UtilisateurInvalideException;
 @RequestMapping("{login}/Utilisateurs")
 public class UtilisateursRest {
 	
-	//@Autowired
-	//private NotificationsServices notificationsServices;
+	@Autowired
+	private NotificationsServices notificationsServices;
 	
 	@Autowired
 	private CreationUtilisateurService creationUtilisateurServices;
@@ -49,23 +51,23 @@ public class UtilisateursRest {
 				try {
 					
 					creationUtilisateurServices.creer(utilisateur);
-					//notificationsServices.notifier("Création de l'utilisateur " + utilisateur.getLogin() + " OK.");
+					notificationsServices.notifier(ActionUtilisateur.CREATION_U, demandeur, utilisateur.toString());
 				
 				} catch (UtilisateurInvalideException e) {
-				
-					//notificationsServices.notifier("Erreur de création: " + e.getMessage());
+
+					notificationsServices.notifier(ActionUtilisateur.CREATION_U, demandeur, e.getErreur().message);
 				
 				}
 				
 			} else {
-				
-				//notificationsServices.notifier("Erreur de création: Droits administrateurs nécessaires.");
+
+				notificationsServices.notifier(ActionUtilisateur.CREATION_U, demandeur, "Droits d'administrateur nécessaires");
 				
 			}
 		
 		} else {
-			
-			
+
+			notificationsServices.notifier(ActionUtilisateur.CREATION_U, demandeur, "Identification nécessaires");
 			
 		}
 		
@@ -77,12 +79,13 @@ public class UtilisateursRest {
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 		
 		if(demandeur != null) {
-		
-			//notificationsServices.notifier("Consultation du profil de " + login);
+
+			notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, login);
 			return rechercherUtilisateurServices.rechercherParLogin(login);
 		
 		} else {
-			
+
+			notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -97,19 +100,20 @@ public class UtilisateursRest {
 		if(demandeur != null) {
 		
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR) | login.equals(loginConsulte)) {
-	
-				//notificationsServices.notifier("Consultation du profil de " + loginConsulte);
+
+				notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, loginConsulte);
 				return rechercherUtilisateurServices.rechercherParLogin(loginConsulte);
 				
 			} else {
-				
-				//notificationsServices.notifier("Erreur de consultation: Droits administrateurs nécessaires.");
+
+				notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, "Identification nécessaires");
 				return null;
 				
 			}
 		
 		} else {
-			
+
+			notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -126,17 +130,18 @@ public class UtilisateursRest {
 		
 			try{
 				
+				notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, login);
 				suppressionUtilisateurServices.supprimer(login);
 				
-			}catch(Exception e){
-				
-				//notificationsServices.notifier("Erreur de suppression");
+			}catch(UtilisateurInvalideException e){
+
+				notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, e.getErreur().message);
 			
 			}
 		
 		} else {
-			
-			
+
+			notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, "Identification nécessaires");
 			
 		}
 		
@@ -152,24 +157,25 @@ public class UtilisateursRest {
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR) | login.equals(loginSupp)) {
 
 				try {
-					
+
+					notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, login);
 					suppressionUtilisateurServices.supprimer(loginSupp);
 					
 				} catch (UtilisateurInvalideException e) {
-					
-					
+
+					notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, e.getErreur().message);
 					
 				}
 				
 			} else {
-				
-				//notificationsServices.notifier("Erreur de suppression: Droits administrateurs nécessaires.");
+
+				notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, "Droits d'administrateur nécessaires pour supprimer un autre utilisateur");
 				
 			}
 			
 		} else {
-			
-			
+
+			notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, "Identification nécessaires");
 			
 		}
 		
@@ -180,13 +186,23 @@ public class UtilisateursRest {
 		
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 		
-		if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
-
-			return listeUtilisateurServices.listeUtilisateur();
-			
+		if(demandeur != null) {
+		
+			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
+	
+				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Tout les utilisateurs");
+				return listeUtilisateurServices.listeUtilisateur();
+				
+			} else {
+	
+				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
+				return null;
+				
+			}
+		
 		} else {
-			
-			//notificationsServices.notifier("Erreur de listage: Droits administrateurs nécessaires.");
+
+			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -202,17 +218,19 @@ public class UtilisateursRest {
 		
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
 	
+				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par nom: " + nom);
 				return listeUtilisateurServices.listeUtilisateurNom(nom);
 				
 			} else {
 
-				//notificationsServices.notifier("Erreur de listage: Droits administrateurs nécessaires.");
+				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			} 
 		
 		} else {
-			
+
+			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -227,18 +245,20 @@ public class UtilisateursRest {
 		if(demandeur != null) {
 		
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
-	
+
+				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par prénom: " + prenom);
 				return listeUtilisateurServices.listeUtilisateurPrenom(prenom);
 				
 			} else {
 
-				//notificationsServices.notifier("Erreur de listage: Droits administrateurs nécessaires.");
+				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			} 
 		
 		} else {
-			
+
+			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -251,20 +271,22 @@ public class UtilisateursRest {
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 		
 		if(demandeur != null) {
-		
+
+			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par ville: " + ville);
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
 	
 				return listeUtilisateurServices.listeUtilisateurVille(ville);
 				
 			} else {
 
-				//notificationsServices.notifier("Erreur de listage: Droits administrateurs nécessaires.");
+				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			} 
 		
 		} else {
-			
+
+			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -281,24 +303,37 @@ public class UtilisateursRest {
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
 	
 				if(profil.equals("ADMINISTRATEUR")) {
+					
+					notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par type: administrateur");
 					return listeUtilisateurServices.listeUtilisateurProfil(ProfilsUtilisateur.ADMINISTRATEUR);
+					
 				} else if(profil.equals("UTILISATEUR")) {
+
+					notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par type: utilisateur");
 					return listeUtilisateurServices.listeUtilisateurProfil(ProfilsUtilisateur.UTILISATEUR);
+					
 				} else if(profil.equals("GERANT")) {
+
+					notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par type: gérant");
 					return listeUtilisateurServices.listeUtilisateurProfil(ProfilsUtilisateur.GERANT);
+					
 				} else {
+					
+					notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Type demandé inexistant");
 					return null;
+					
 				}
 				
 			} else {
 
-				//notificationsServices.notifier("Erreur de listage: Droits administrateurs nécessaires.");
+				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			} 
 		
 		} else {
-			
+
+			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
 			return null;
 			
 		}

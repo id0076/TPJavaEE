@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ensai.ProjetJavaEE.utilisateurs.modele.Ville;
 
 @Service
-public class VilleService {
+public class CreationVilleService {
 	
 	@Autowired
 	private EntityManager entityManager;
