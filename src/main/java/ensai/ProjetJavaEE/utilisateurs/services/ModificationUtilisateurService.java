@@ -8,36 +8,23 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import ensai.ProjetJavaEE.utilisateurs.modele.Utilisateur;
-import ensai.ProjetJavaEE.utilisateurs.services.UtilisateurInvalideException.ErreurUtilisateur;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS)
 public class ModificationUtilisateurService {
-
-	@Autowired
-	private ValidationUtilisateurServices validationUtilisateurService;
 	
 	@Autowired
-	private RechercherUtilisateurService rechercherUtilisateurService;
+	private RechercherUtilisateurService rechercheUtilisateurService;
 
 	@Autowired
 	private EntityManager entityManager;
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void ModificationUtilisateur(Utilisateur utilisateur) throws UtilisateurInvalideException  {
+	public void ModificationEmailUtilisateur(String nouveauEmail, String login) {
 		
-		if (utilisateur == null) {
-			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
-		}
-		
-		validationUtilisateurService.validerUtilisateur(utilisateur);
-		
-		if (rechercherUtilisateurService.rechercherParLogin(utilisateur.getLogin()) == null) {
-			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_NONEXISTANT);
-		}
-	
+		Utilisateur utilisateur = rechercheUtilisateurService.rechercherParLogin(login);
+		utilisateur.setEmail(nouveauEmail);
 		entityManager.persist(utilisateur);
-	
+		
 	}
 
 }

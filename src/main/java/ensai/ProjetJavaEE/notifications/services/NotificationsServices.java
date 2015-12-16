@@ -11,13 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 public class NotificationsServices {
 
 	public void notifier(ActionUtilisateur actU, Utilisateur u, String msg) {
+		
 		log.info("\t [" + actU.message + "]: \t'{}' \t'{}' \t'{}'", u.getLogin(), u.getNom(), msg);
+		
 	}
 
 	public enum ActionUtilisateur {
 
-		CREATION("Création d'un utilisateur."), SUPPRESSION("Suppression d'un utilisateur."), MODIFICATION(
-				"Modification d'un utilisateur.");
+		CREATION("Création d'un utilisateur."),
+		SUPPRESSION("Suppression d'un utilisateur."),
+		MODIFICATION("Modification d'un utilisateur.");
 
 		@Getter
 		public String message;

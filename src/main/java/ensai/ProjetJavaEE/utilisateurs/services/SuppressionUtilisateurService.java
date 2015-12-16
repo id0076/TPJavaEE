@@ -19,17 +19,17 @@ public class SuppressionUtilisateurService {
 
 	@Autowired
 	private EntityManager entityManager;
-
 	
-	@Transactional(propagation = Propagation.REQUIRED)
 	public void supprimer(String login) throws UtilisateurInvalideException {
 		
-		Utilisateur utilisateur = rechercherUtilisateurService.rechercherParLogin(login);
+		if (rechercherUtilisateurService.rechercherParLogin(login) != null) {
+			
+			entityManager.remove(entityManager.find(Utilisateur.class, login));
 		
-		if (utilisateur != null) {
-			entityManager.remove(utilisateur);
-		}else{
-			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_NONEXISTANT);
+		} else {
+			
+			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
+			
 		}
 
 	}

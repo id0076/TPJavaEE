@@ -39,7 +39,6 @@ public class CreationUtilisateurService {
 		entityManager.persist(utilisateur);
 
 		return utilisateur;
-		
 	}
 
 

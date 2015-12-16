@@ -12,13 +12,16 @@ public class UtilisateurInvalideException extends Exception {
 
 	@Builder
 	public UtilisateurInvalideException(ErreurUtilisateur erreur, Throwable cause) {
+		
 		super(cause);
-
 		this.erreur = erreur;
+		
 	}
 
 	public UtilisateurInvalideException(ErreurUtilisateur erreur) {
+		
 		this.erreur = erreur;
+	
 	}
 
 	public enum ErreurUtilisateur {
@@ -28,9 +31,7 @@ public class UtilisateurInvalideException extends Exception {
 		PRENOM_OBLIGATOIRE("Le prénom de l'utilisateur est obligatoire."),
 		LOGIN_OBLIGATOIRE("Le login est obligatoire."),
 		MDP_OBLIGATOIRE("Le mot de passe est obligatoire."),
-		UTILISATEUR_EXISTANT("Un utilisateur de même login existe déjà sur le système."),
-		UTILISATEUR_NONEXISTANT("L'utilisateur n'existe pas."),
-		PROFIL_OBLIGATOIRE("Au moins un profil est obligatoire.");
+		UTILISATEUR_EXISTANT("Un utilisateur de même login existe déjà sur le système.");
 
 		@Getter
 		public String message;
