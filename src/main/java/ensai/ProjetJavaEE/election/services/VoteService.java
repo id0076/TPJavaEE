@@ -27,13 +27,15 @@ public class VoteService {
 	
     @Autowired
 	private RechercherElectionService rechercherElection;
+    
+    @Autowired
+    private ModificationService modificationService;
 
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void voter(Utilisateur utilisateur,String titre, String vote) throws ElectionInvalideException, UtilisateurInvalideException{
         Election election = rechercherElection.rechercherParTitre(titre);
-        int nbOui;
-		int nbNon;
+       
 		if(election!=null){
 
 			if(utilisateur!=null){
@@ -42,11 +44,9 @@ public class VoteService {
 
 					if(vote.equals("oui")){
 
-						nbOui =election.getNbOui();
-						nbOui+=1;
+						modificationService.incrementerOui(titre);
 					}else{
-						nbNon=election.getNbNon();
-						nbNon+=1;
+						modificationService.incrementerNon(titre);
 					}
 				}else{
 					throw new ElectionInvalideException(ErreurElection.ELECTION_TERMINEE);
