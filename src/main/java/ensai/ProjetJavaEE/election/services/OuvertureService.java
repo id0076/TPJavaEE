@@ -8,9 +8,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import ensai.ProjetJavaEE.election.modele.Election;
+import ensai.ProjetJavaEE.election.services.ElectionInvalideException.ErreurElection;
 import ensai.ProjetJavaEE.utilisateurs.services.CreationUtilisateurService;
 import ensai.ProjetJavaEE.utilisateurs.services.UtilisateurInvalideException;
 import ensai.ProjetJavaEE.utilisateurs.services.UtilisateurInvalideException.ErreurUtilisateur;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -22,17 +24,19 @@ public class OuvertureService {
 	EntityManager em;
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Election creer(Election election) throws UtilisateurInvalideException{
+	public Election creer(Election election) throws UtilisateurInvalideException, ElectionInvalideException{
 		log.info("=====> Création de l'élection : {}.", election);
 
 		if (election == null) {
-			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
+			throw new ElectionInvalideException(ErreurElection.ELECTION_OBLIGATOIRE);
 		}
 
 		em.persist(election);
 
 		return election;
 	}
+
+
 
 }
 

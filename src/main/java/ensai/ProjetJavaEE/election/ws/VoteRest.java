@@ -22,11 +22,11 @@ public class VoteRest {
 	@Autowired
 	private NotificationsServices notificationsServices;
 
-	public void vote(Utilisateur utilisateur,String vote){
+	public void vote(Utilisateur utilisateur,String titre,String vote){
 		log.info("=====> L'utilisateur a voté {}: {}.", utilisateur);
 
 		try{
-			voteService.voter(utilisateur,vote);
+			voteService.voter(utilisateur,titre,vote);
 		}catch(Exception e){
 			notificationsServices.notifier("Erreur de vote");
 		}

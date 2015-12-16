@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import ensai.ProjetJavaEE.utilisateurs.modele.Adresse;
 import ensai.ProjetJavaEE.utilisateurs.modele.ProfilsUtilisateur;
@@ -25,12 +28,15 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Election {
 	
-	Utilisateur gerant;
-	String titre;
-	String description;
-	Date debut;
-	Date fin;
-	int nbOui;
-	int nbNon;
+	
+	private Utilisateur gerant;
+	@Id
+	private String titre;
+	private String description;
+	@Temporal(TemporalType.DATE)
+	private Date debut;
+	private Date fin;
+	private int nbOui;
+	private int nbNon;
 
 }

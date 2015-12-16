@@ -27,6 +27,8 @@ public class ElectionRest {
 		log.info("=====> Création l'élection {}: {}.", titre, election);
 
 		election.setTitre(titre);
+	    election.setNbNon(0);
+	    election.setNbOui(0);
 
 		try{
 			ouvertureService.creer(election);

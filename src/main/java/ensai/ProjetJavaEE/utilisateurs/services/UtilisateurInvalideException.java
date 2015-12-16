@@ -12,13 +12,16 @@ public class UtilisateurInvalideException extends Exception {
 
 	@Builder
 	public UtilisateurInvalideException(ErreurUtilisateur erreur, Throwable cause) {
+		
 		super(cause);
-
 		this.erreur = erreur;
+		
 	}
 
 	public UtilisateurInvalideException(ErreurUtilisateur erreur) {
+		
 		this.erreur = erreur;
+	
 	}
 
 	public enum ErreurUtilisateur {
