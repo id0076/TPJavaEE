@@ -17,8 +17,8 @@ import ensai.ProjetJavaEE.utilisateurs.modele.ProfilsUtilisateur;
 import ensai.ProjetJavaEE.utilisateurs.modele.Utilisateur;
 import ensai.ProjetJavaEE.utilisateurs.modele.Ville;
 import ensai.ProjetJavaEE.utilisateurs.services.UtilisateurInvalideException;
-import ensai.ProjetJavaEE.utilisateurs.services.UtilisateurService;
-import ensai.ProjetJavaEE.utilisateurs.services.VilleService;
+import ensai.ProjetJavaEE.utilisateurs.services.CreationUtilisateurService;
+import ensai.ProjetJavaEE.utilisateurs.services.CreationVilleService;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -27,10 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 public class Initialisation {
 
 	@Autowired
-	private VilleService villeService;
+	private CreationVilleService villeService;
 	
 	@Autowired
-	private UtilisateurService utilisateurService;
+	private CreationUtilisateurService creationUtilisateurService;
 
 	@SuppressWarnings("deprecation")
 	@PostConstruct
@@ -63,7 +63,7 @@ public class Initialisation {
 		utilisateur.setAdresse(adresse);
 		
 		try {
-			utilisateurService.creer(utilisateur);
+			creationUtilisateurService.creer(utilisateur);
 			System.out.println("Utilisateur créé");
 		} catch (UtilisateurInvalideException e) {
 			e.printStackTrace();

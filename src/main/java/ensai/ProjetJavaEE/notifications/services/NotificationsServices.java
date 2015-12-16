@@ -12,15 +12,18 @@ public class NotificationsServices {
 
 	public void notifier(ActionUtilisateur actU, Utilisateur u, String msg) {
 		
-		log.info("\t [" + actU.message + "]: \t'{}' \t'{}' \t'{}'", u.getLogin(), u.getNom(), msg);
+		log.info("\t [" + actU.message + "]: \t'{}' \t'{}' \t'{}'", u.getLogin(), u.getEmail(), msg);
 		
 	}
 
 	public enum ActionUtilisateur {
 
-		CREATION("Création d'un utilisateur."),
-		SUPPRESSION("Suppression d'un utilisateur."),
-		MODIFICATION("Modification d'un utilisateur.");
+		CREATION_U("Création d'un utilisateur."),
+		CREATION_V("Création d'une ville."),
+		LISTAGE("Listage d'utilisateur."),
+		MODIFICATION("Modification d'un utilisateur."),
+		RECHERCHE("Recherche d'un utilisateur."),
+		SUPPRESSION("Suppression d'un utilisateur.");
 
 		@Getter
 		public String message;
