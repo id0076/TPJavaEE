@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import affichage.Page;
+import affichage.PageUtilisateur;
 import ensai.ProjetJavaEE.notifications.services.NotificationsServices;
 import ensai.ProjetJavaEE.notifications.services.NotificationsServices.ActionUtilisateur;
 //import ensai.ProjetJavaEE.notifications.services.NotificationsServices;
@@ -38,6 +41,23 @@ public class UtilisateursRest {
 	
 	@Autowired
 	private ListeUtilisateurService listeUtilisateurServices;
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String pageOutils(@PathVariable String login) {
+		
+		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
+		
+		if(demandeur != null) {
+
+			return new PageUtilisateur(demandeur).toHtml();
+					
+		} else {
+			
+			return "Erreur";
+			
+		}
+		
+	}
 
 	@RequestMapping(value = "/Creation", method = RequestMethod.PUT)
 	public void creerUtilisateur(@PathVariable String login, @RequestBody Utilisateur utilisateur) {
@@ -74,14 +94,14 @@ public class UtilisateursRest {
 	}
 	
 	@RequestMapping(value = "/Consultation", method = RequestMethod.GET)
-	public Utilisateur consultationUtilisateur(@PathVariable String login) {
+	public String consultationUtilisateur(@PathVariable String login) {
 		
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 		
 		if(demandeur != null) {
 
 			notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, login);
-			return rechercherUtilisateurServices.rechercherParLogin(login);
+			return new Page(demandeur, "Consultation", rechercherUtilisateurServices.rechercherParLogin(login).toHTML()).toHtml();
 		
 		} else {
 
@@ -92,8 +112,8 @@ public class UtilisateursRest {
 		
 	}
 	
-	@RequestMapping(value = "/Consultation/{loginConsulte}", method = RequestMethod.GET)
-	public Utilisateur consultationUtilisateur(@PathVariable String login, @PathVariable String loginConsulte) {
+	@RequestMapping(value = "/Consultation", method = RequestMethod.GET)
+	public Utilisateur consultationUtilisateur(@PathVariable String login, @RequestParam String loginConsulte) {
 		
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 		

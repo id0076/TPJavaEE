@@ -46,4 +46,15 @@ public class Utilisateur {
 	@Embedded
 	private Adresse adresse;
 	
+	public String toHTML() {
+		
+		String stringReturn = "Login: " + login + "<br/>"
+				+ "  Identité:          " + nom + " " + prenom + "<br/>"
+				+ "  Date de naissance: " + dateDeNaissance + "<br/>"
+				+ "  Email            : " + email + "<br/>";
+		
+		return stringReturn;
+		
+	}
+	
 }
