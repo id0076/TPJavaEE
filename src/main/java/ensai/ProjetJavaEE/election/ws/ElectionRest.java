@@ -33,7 +33,6 @@ public class ElectionRest {
 		try{
 			ouvertureService.creer(election);
 		}catch(Exception e){
-			notificationsServices.notifier("Erreur de création");
 		}
 	}
 

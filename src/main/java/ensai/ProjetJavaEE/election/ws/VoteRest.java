@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ensai.ProjetJavaEE.election.services.VoteService;
 import ensai.ProjetJavaEE.notifications.services.NotificationsServices;
 import ensai.ProjetJavaEE.utilisateurs.modele.Utilisateur;
-import ensai.ProjetJavaEE.utilisateurs.ws.ConnexionRest;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -28,7 +27,6 @@ public class VoteRest {
 		try{
 			voteService.voter(utilisateur,titre,vote);
 		}catch(Exception e){
-			notificationsServices.notifier("Erreur de vote");
 		}
 	}
 
