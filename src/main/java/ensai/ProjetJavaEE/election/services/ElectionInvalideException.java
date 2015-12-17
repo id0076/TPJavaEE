@@ -6,6 +6,7 @@ import lombok.Getter;
 
 public class ElectionInvalideException extends Exception{
 	
+	private static final long serialVersionUID = 6952445089012077657L;
 	
 	@Getter
 	private ErreurElection erreur;
@@ -23,13 +24,15 @@ public class ElectionInvalideException extends Exception{
 	
 public enum ErreurElection {
 		
-		ELECTION_OBLIGATOIRE("L'election est obligatoire pour effectuer l'opération."),
+		ELECTION_OBLIGATOIRE("L'élection est obligatoire pour effectuer l'opération."),
 		TITRE_OBLIGATOIRE("Le titre est obligatoire."),
 		GERANT_OBLIGATOIRE("Une gérant est obligatoire."),
-		DEBUT_OBLIGATOIRE("Une date de début est obligatoire."),
-		FIN_OBLIGATOIRE("Une date de fin est obligatoire."),
-		ELECTION_TERMINEE("L'election est cloturée"),
-		ELECTION_EN_COURS("L'election est toujours en cours"),
+		PROBLEME_DATE("Dates incompatibles"),
+		ELECTION_TERMINEE("L'élection est cloturée"),
+		ELECTION_EN_COURS("L'élection est toujours en cours"),
+		ELECTION_EXISTANT("L'élection existe déjà"),
+		ELECTION_INEXISTANT("L'élection n'existe pas"),
+		DESCRIPTION_OBLIGATOIRE("Une description est obligatoire")
 		;
 
 		@Getter

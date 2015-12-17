@@ -10,11 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import affichage.Page;
-import affichage.PageUtilisateur;
 import ensai.ProjetJavaEE.notifications.services.NotificationsServices;
-import ensai.ProjetJavaEE.notifications.services.NotificationsServices.ActionUtilisateur;
-//import ensai.ProjetJavaEE.notifications.services.NotificationsServices;
+import ensai.ProjetJavaEE.notifications.services.NotificationsServices.Action;
 import ensai.ProjetJavaEE.utilisateurs.modele.ProfilsUtilisateur;
 import ensai.ProjetJavaEE.utilisateurs.modele.Utilisateur;
 import ensai.ProjetJavaEE.utilisateurs.services.CreationUtilisateurService;
@@ -41,23 +38,6 @@ public class UtilisateursRest {
 	
 	@Autowired
 	private ListeUtilisateurService listeUtilisateurServices;
-	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String pageOutils(@PathVariable String login) {
-		
-		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
-		
-		if(demandeur != null) {
-
-			return new PageUtilisateur(demandeur).toHtml();
-					
-		} else {
-			
-			return "Erreur";
-			
-		}
-		
-	}
 
 	@RequestMapping(value = "/Creation", method = RequestMethod.PUT)
 	public void creerUtilisateur(@PathVariable String login, @RequestBody Utilisateur utilisateur) {
@@ -71,48 +51,48 @@ public class UtilisateursRest {
 				try {
 					
 					creationUtilisateurServices.creer(utilisateur);
-					notificationsServices.notifier(ActionUtilisateur.CREATION_U, demandeur, utilisateur.toString());
+					notificationsServices.notifier(Action.CREATION_U, demandeur, utilisateur.toString());
 				
 				} catch (UtilisateurInvalideException e) {
 
-					notificationsServices.notifier(ActionUtilisateur.CREATION_U, demandeur, e.getErreur().message);
+					notificationsServices.notifier(Action.CREATION_U, demandeur, e.getErreur().message);
 				
 				}
 				
 			} else {
 
-				notificationsServices.notifier(ActionUtilisateur.CREATION_U, demandeur, "Droits d'administrateur nécessaires");
+				notificationsServices.notifier(Action.CREATION_U, demandeur, "Droits d'administrateur nécessaires");
 				
 			}
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.CREATION_U, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.CREATION_U, demandeur, "Identification nécessaires");
 			
 		}
 		
 	}
 	
 	@RequestMapping(value = "/Consultation", method = RequestMethod.GET)
-	public String consultationUtilisateur(@PathVariable String login) {
+	public Utilisateur consultationUtilisateur(@PathVariable String login) {
 		
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 		
 		if(demandeur != null) {
 
-			notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, login);
-			return new Page(demandeur, "Consultation", rechercherUtilisateurServices.rechercherParLogin(login).toHTML()).toHtml();
+			notificationsServices.notifier(Action.RECHERCHE_U, demandeur, login);
+			return rechercherUtilisateurServices.rechercherParLogin(login);
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.RECHERCHE_U, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
 		
 	}
 	
-	@RequestMapping(value = "/Consultation", method = RequestMethod.GET)
+	@RequestMapping(value = "/Consultation/{loginConsulte}", method = RequestMethod.GET)
 	public Utilisateur consultationUtilisateur(@PathVariable String login, @RequestParam String loginConsulte) {
 		
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
@@ -121,19 +101,19 @@ public class UtilisateursRest {
 		
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR) | login.equals(loginConsulte)) {
 
-				notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, loginConsulte);
+				notificationsServices.notifier(Action.RECHERCHE_U, demandeur, loginConsulte);
 				return rechercherUtilisateurServices.rechercherParLogin(loginConsulte);
 				
 			} else {
 
-				notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, "Identification nécessaires");
+				notificationsServices.notifier(Action.RECHERCHE_U, demandeur, "Identification nécessaires");
 				return null;
 				
 			}
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.RECHERCHE, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.RECHERCHE_U, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -150,18 +130,18 @@ public class UtilisateursRest {
 		
 			try{
 				
-				notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, login);
+				notificationsServices.notifier(Action.SUPPRESSION_U, demandeur, login);
 				suppressionUtilisateurServices.supprimer(login);
 				
 			}catch(UtilisateurInvalideException e){
 
-				notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, e.getErreur().message);
+				notificationsServices.notifier(Action.SUPPRESSION_U, demandeur, e.getErreur().message);
 			
 			}
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.SUPPRESSION_U, demandeur, "Identification nécessaires");
 			
 		}
 		
@@ -178,24 +158,24 @@ public class UtilisateursRest {
 
 				try {
 
-					notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, login);
+					notificationsServices.notifier(Action.SUPPRESSION_U, demandeur, login);
 					suppressionUtilisateurServices.supprimer(loginSupp);
 					
 				} catch (UtilisateurInvalideException e) {
 
-					notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, e.getErreur().message);
+					notificationsServices.notifier(Action.SUPPRESSION_U, demandeur, e.getErreur().message);
 					
 				}
 				
 			} else {
 
-				notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, "Droits d'administrateur nécessaires pour supprimer un autre utilisateur");
+				notificationsServices.notifier(Action.SUPPRESSION_U, demandeur, "Droits d'administrateur nécessaires pour supprimer un autre utilisateur");
 				
 			}
 			
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.SUPPRESSION, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.SUPPRESSION_U, demandeur, "Identification nécessaires");
 			
 		}
 		
@@ -210,19 +190,19 @@ public class UtilisateursRest {
 		
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
 	
-				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Tout les utilisateurs");
+				notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Tout les utilisateurs");
 				return listeUtilisateurServices.listeUtilisateur();
 				
 			} else {
 	
-				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
+				notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			}
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -238,19 +218,19 @@ public class UtilisateursRest {
 		
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
 	
-				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par nom: " + nom);
+				notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Recherche par nom: " + nom);
 				return listeUtilisateurServices.listeUtilisateurNom(nom);
 				
 			} else {
 
-				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
+				notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			} 
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -266,19 +246,19 @@ public class UtilisateursRest {
 		
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
 
-				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par prénom: " + prenom);
+				notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Recherche par prénom: " + prenom);
 				return listeUtilisateurServices.listeUtilisateurPrenom(prenom);
 				
 			} else {
 
-				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
+				notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			} 
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -292,21 +272,21 @@ public class UtilisateursRest {
 		
 		if(demandeur != null) {
 
-			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par ville: " + ville);
+			notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Recherche par ville: " + ville);
 			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
 	
 				return listeUtilisateurServices.listeUtilisateurVille(ville);
 				
 			} else {
 
-				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
+				notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			} 
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Identification nécessaires");
 			return null;
 			
 		}
@@ -324,36 +304,36 @@ public class UtilisateursRest {
 	
 				if(profil.equals("ADMINISTRATEUR")) {
 					
-					notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par type: administrateur");
+					notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Recherche par type: administrateur");
 					return listeUtilisateurServices.listeUtilisateurProfil(ProfilsUtilisateur.ADMINISTRATEUR);
 					
 				} else if(profil.equals("UTILISATEUR")) {
 
-					notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par type: utilisateur");
+					notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Recherche par type: utilisateur");
 					return listeUtilisateurServices.listeUtilisateurProfil(ProfilsUtilisateur.UTILISATEUR);
 					
 				} else if(profil.equals("GERANT")) {
 
-					notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Recherche par type: gérant");
+					notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Recherche par type: gérant");
 					return listeUtilisateurServices.listeUtilisateurProfil(ProfilsUtilisateur.GERANT);
 					
 				} else {
 					
-					notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Type demandé inexistant");
+					notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Type demandé inexistant");
 					return null;
 					
 				}
 				
 			} else {
 
-				notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Droits d'administrateur nécessaires");
+				notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Droits d'administrateur nécessaires");
 				return null;
 				
 			} 
 		
 		} else {
 
-			notificationsServices.notifier(ActionUtilisateur.LISTAGE, demandeur, "Identification nécessaires");
+			notificationsServices.notifier(Action.LISTAGE_U, demandeur, "Identification nécessaires");
 			return null;
 			
 		}

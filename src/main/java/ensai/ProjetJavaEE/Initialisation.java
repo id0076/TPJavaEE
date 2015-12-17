@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import ensai.ProjetJavaEE.election.modele.Election;
+import ensai.ProjetJavaEE.election.services.CreationElectionService;
+import ensai.ProjetJavaEE.election.services.ElectionInvalideException;
 import ensai.ProjetJavaEE.utilisateurs.modele.Adresse;
 import ensai.ProjetJavaEE.utilisateurs.modele.ProfilsUtilisateur;
 import ensai.ProjetJavaEE.utilisateurs.modele.Utilisateur;
@@ -31,6 +34,9 @@ public class Initialisation {
 	
 	@Autowired
 	private CreationUtilisateurService creationUtilisateurService;
+	
+	@Autowired
+	private CreationElectionService creationElectionService;
 
 	@SuppressWarnings("deprecation")
 	@PostConstruct
@@ -66,6 +72,18 @@ public class Initialisation {
 			creationUtilisateurService.creer(utilisateur);
 			System.out.println("Utilisateur créé");
 		} catch (UtilisateurInvalideException e) {
+			e.printStackTrace();
+		}
+		
+		Election election = new Election();
+		election.setTitre("ElectionTest");
+		election.setDescription("Test");
+		election.setGerant(utilisateur);
+		
+		try {
+			creationElectionService.creer(election);
+		} catch (ElectionInvalideException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
