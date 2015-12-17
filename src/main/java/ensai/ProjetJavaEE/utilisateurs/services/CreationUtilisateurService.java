@@ -40,6 +40,24 @@ public class CreationUtilisateurService {
 
 		return utilisateur;
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Utilisateur modifier(Utilisateur utilisateur) throws UtilisateurInvalideException {
+
+		if (utilisateur == null) {
+			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
+		}
+
+		if (rechercherUtilisateurService.rechercherParLogin(utilisateur.getLogin()) == null) {
+			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_INEXISTANT);
+		}
+		
+		validationServices.validerUtilisateur(utilisateur);
+
+		entityManager.persist(utilisateur);
+
+		return utilisateur;
+	}
 
 
 }

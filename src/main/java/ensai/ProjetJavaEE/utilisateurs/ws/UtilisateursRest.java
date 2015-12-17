@@ -73,6 +73,40 @@ public class UtilisateursRest {
 		
 	}
 	
+	@RequestMapping(value = "/Modification", method = RequestMethod.PUT)
+	public void modifierUtilisateur(@PathVariable String login, @RequestBody Utilisateur utilisateur) {
+		
+		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
+		
+		if(demandeur != null) {
+		
+			if(demandeur.getProfils().contains(ProfilsUtilisateur.ADMINISTRATEUR)) {
+				
+				try {
+					
+					creationUtilisateurServices.modifier(utilisateur);
+					notificationsServices.notifier(Action.CREATION_U, demandeur, utilisateur.toString());
+				
+				} catch (UtilisateurInvalideException e) {
+
+					notificationsServices.notifier(Action.CREATION_U, demandeur, e.getErreur().message);
+				
+				}
+				
+			} else {
+
+				notificationsServices.notifier(Action.CREATION_U, demandeur, "Droits d'administrateur nécessaires");
+				
+			}
+		
+		} else {
+
+			notificationsServices.notifier(Action.CREATION_U, demandeur, "Identification nécessaires");
+			
+		}
+		
+	}
+	
 	@RequestMapping(value = "/Consultation", method = RequestMethod.GET)
 	public Utilisateur consultationUtilisateur(@PathVariable String login) {
 		

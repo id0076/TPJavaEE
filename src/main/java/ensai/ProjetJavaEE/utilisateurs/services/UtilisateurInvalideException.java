@@ -31,7 +31,8 @@ public class UtilisateurInvalideException extends Exception {
 		PRENOM_OBLIGATOIRE("Le prénom de l'utilisateur est obligatoire."),
 		LOGIN_OBLIGATOIRE("Le login est obligatoire."),
 		MDP_OBLIGATOIRE("Le mot de passe est obligatoire."),
-		UTILISATEUR_EXISTANT("Un utilisateur de même login existe déjà sur le système.");
+		UTILISATEUR_EXISTANT("Un utilisateur de même login existe déjà sur le système."),
+		UTILISATEUR_INEXISTANT("Cette utilisateur n'existe pas.");
 
 		@Getter
 		public String message;
