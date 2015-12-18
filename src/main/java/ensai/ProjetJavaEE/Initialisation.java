@@ -64,7 +64,7 @@ public class Initialisation {
 		
 		Adresse adresse = new Adresse();
 		adresse.setVille(rennes);
-		adresse.setRue("République");
+		adresse.setRue("République");	
 		
 		utilisateur.setAdresse(adresse);
 		
