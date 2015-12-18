@@ -49,7 +49,7 @@ public class NotificationsRest {
 
 	}
 
-	@RequestMapping(value = "/LogLogin/{logLogin}", method = RequestMethod.GET)
+	@RequestMapping(value = "/Log/Login/{logLogin}", method = RequestMethod.GET)
 	public String listeLogLogin(@PathVariable String login, @PathVariable String logLogin) {
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 
@@ -77,7 +77,7 @@ public class NotificationsRest {
 
 	}
 
-	@RequestMapping(value = "/LogAction/{logAction}", method = RequestMethod.GET)
+	@RequestMapping(value = "/Log/Action/{logAction}", method = RequestMethod.GET)
 	public String listeLogActipon(@PathVariable String login, @PathVariable String logAction) {
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 
