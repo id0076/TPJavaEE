@@ -127,7 +127,7 @@ public class UtilisateursRest {
 	}
 	
 	@RequestMapping(value = "/Consultation/{loginConsulte}", method = RequestMethod.GET)
-	public Utilisateur consultationUtilisateur(@PathVariable String login, @RequestParam String loginConsulte) {
+	public Utilisateur consultationUtilisateur(@PathVariable String login, @PathVariable String loginConsulte) {
 		
 		Utilisateur demandeur = rechercherUtilisateurServices.rechercherParLogin(login);
 		
